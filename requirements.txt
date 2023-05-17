@@ -9,3 +9,4 @@ dataframe_image
 matplotlib
 lxml
 webdriver-manager
+selenium
