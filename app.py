@@ -9,6 +9,10 @@ import numpy as np
 import dataframe_image as dfi
 import hashlib
 from urllib.request import urlopen, Request
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+
+driver = webdriver.Chrome(ChromeDriverManager().install())
 
 token = os.getenv("Token")
 bot_id = os.getenv("BotID")  # os.getenv("TEST_BOT_ID")
