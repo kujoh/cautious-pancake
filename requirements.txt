@@ -8,4 +8,4 @@ numpy
 dataframe_image
 matplotlib
 lxml
-chromium-chromedriver
+chromium
