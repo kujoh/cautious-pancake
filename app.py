@@ -9,10 +9,6 @@ import numpy as np
 import dataframe_image as dfi
 import hashlib
 from urllib.request import urlopen, Request
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-
-driver = webdriver.Chrome(ChromeDriverManager().install())
 
 token = os.getenv("Token")
 bot_id = os.getenv("BotID")  # os.getenv("TEST_BOT_ID")
@@ -56,7 +52,16 @@ def receive():
                 databs[index] = [int(value.text) for value in cols[1:]]
     
             df = pd.DataFrame.from_dict(databs, orient='index', columns=headers)
-            dfi.export(df, 'standings.png')
+            # Add a new column and set its value based on a condition wrt the index
+            df['Color'] = df.index
+            df.loc[df.index == 'The B Team', 'Color'] = 'Green'
+            df.loc[df.index == '#BackHeelz', 'Color'] = 'Brown'
+            df.loc[df.index == '5 North Sundowners', 'Color'] = 'Gray'
+            df.loc[df.index == 'Misfits', 'Color'] = 'Blue'
+            df.loc[df.index == 'Weak Ankles FC', 'Color'] = 'Black'
+            df.loc[df.index == '', 'Color'] = ''
+            df.loc[df.index == df['Color'], 'Color'] = '???'
+            dfi.export(df, 'standings.png', table_conversion = 'matplotlib')
             
             post_img_to_groupme(
                 "standings.png")
