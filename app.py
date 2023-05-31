@@ -20,7 +20,7 @@ standings_url = "https://www.oaklandyard.com/lg_standings/lg_standings.asp?LgSes
 
 @app.route("/", methods=["GET"])
 def home():
-    return "https://automaticoctocouscous.onrender.com"
+    return "https://cautiouspancake.onrender.com"
 
 @app.route("/", methods=["POST"])
 def receive():
