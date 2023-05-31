@@ -11,11 +11,11 @@ import hashlib
 from urllib.request import urlopen, Request
 
 token = os.getenv("Token")
-bot_id = os.getenv("BotID")  # os.getenv("TEST_BOT_ID")
+bot_id = os.getenv("BotID")
 app = Flask(__name__)
 
 url = "https://api.groupme.com/v3/bots/post"
-img_url = "https://api.groupme.com/v3/bots/post"
+img_url = "https://image.groupme.com"
 standings_url = "https://www.oaklandyard.com/lg_standings/lg_standings.asp?LgSessCode=2732&ReturnPg=lg%5Fsoccer%5Fcoed%2Easp%232732&ShowRankings=False&HeaderTitle=&sw=1800"
 
 @app.route("/", methods=["GET"])
@@ -53,7 +53,7 @@ def receive():
     
             df = pd.DataFrame.from_dict(databs, orient='index', columns=headers)
         
-            # Add a new column and set its value based on a condition with respect to the index
+            # Add a new column and set its value based on a condition wrt the index
             df['Color'] = df.index
             df.loc[df.index == 'The B Team', 'Color'] = 'Green'
             df.loc[df.index == '#BackHeelz', 'Color'] = 'Brown'
@@ -62,7 +62,7 @@ def receive():
             df.loc[df.index == 'Weak Ankles FC', 'Color'] = 'Black'
             df.loc[df.index == '', 'Color'] = ''
             df.loc[df.index == df['Color'], 'Color'] = '???'
-
+            
             dfi.export(df, 'standings.png', table_conversion = 'matplotlib')
             
             post_img_to_groupme(
@@ -82,7 +82,7 @@ def send(msg):
 def post_img_to_groupme(img):
     image = open(img, "rb").read()
     req = requests.post(
-        url='https://api.groupme.com/v3/bots/post',
+        url='https://image.groupme.com/pictures',
         data=image,
         headers={
             'Content-Type': 'image/png',
