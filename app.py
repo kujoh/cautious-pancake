@@ -80,8 +80,12 @@ def post_img_to_groupme(img):
         }
     )
 
-    d = json.loads(req.text)
-    picture_url = d["payload"]["picture_url"]
+    try:
+        d = req.json()
+        picture_url = d["payload"]["picture_url"]
+    except (json.JSONDecodeError, KeyError) as e:
+        print("Error decoding JSON response:", e)
+        return
 
     send_json = {
         "bot_id": bot_id,
@@ -94,4 +98,4 @@ def post_img_to_groupme(img):
     }
 
     r = requests.post(url=url, json=send_json)
-    print("post_img_to_groupme complete: ", r)
+    print("post_img_to_groupme complete:", r)
