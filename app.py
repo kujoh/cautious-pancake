@@ -63,7 +63,7 @@ def receive():
             df.loc[df.index == '', 'Color'] = ''
             df.loc[df.index == df['Color'], 'Color'] = '???'
 
-            dfi.export(df, 'standings.png', table_conversion = 'matplotlib')
+            dfi.export(df, 'standings.png')
             
             post_img_to_groupme(
                 "standings.png")
