@@ -85,7 +85,7 @@ def post_img_to_groupme(img):
         url='https://image.groupme.com/pictures',
         data=image,
         headers={
-            'Content-Type': 'image/jpeg',
+            'Content-Type': 'image/png',
             'X-Access-Token': token
         }
     )
