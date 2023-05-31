@@ -82,7 +82,7 @@ def send(msg):
 def post_img_to_groupme(img):
     image = open(img, "rb").read()
     req = requests.post(
-        url='https://image.groupme.com/pictures',
+        url='https://api.groupme.com/v3/bots/post',
         data=image,
         headers={
             'Content-Type': 'image/png',
