@@ -15,7 +15,7 @@ bot_id = os.getenv("BotID")  # os.getenv("TEST_BOT_ID")
 app = Flask(__name__)
 
 url = "https://api.groupme.com/v3/bots/post"
-img_url = "https://image.groupme.com"
+img_url = "https://api.groupme.com/v3/bots/post"
 standings_url = "https://www.oaklandyard.com/lg_standings/lg_standings.asp?LgSessCode=2732&ReturnPg=lg%5Fsoccer%5Fcoed%2Easp%232732&ShowRankings=False&HeaderTitle=&sw=1800"
 
 @app.route("/", methods=["GET"])
