@@ -63,7 +63,7 @@ def fetch_standings_data(standings_url):
     for row in rows[1:]:
         cols = row.find_all('div')
         index = cols[0].text.strip()
-        databs[index] = [int(value.text) for value in cols[1:]]
+        databs[index] = [int(value.text) if value.text.isdigit() else 0 for value in cols[1:]]
 
     df = pd.DataFrame.from_dict(databs, orient='index', columns=headers)
 
