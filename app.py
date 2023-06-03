@@ -12,6 +12,7 @@ from urllib.request import urlopen, Request
 
 token = os.getenv("Token")
 bot_id = os.getenv("BotID")
+group_id = os.getenv("GroupID")
 app = Flask(__name__)
 
 url = "https://api.groupme.com/v3/bots/post"
@@ -39,8 +40,71 @@ def receive():
             dfi.export(df, 'standings.png', table_conversion = 'matplotlib')
             post_img_to_groupme(
                 "standings.png")
+            
+        if "/run" in data["text"].lower():
+            main()
 
     return "ok", 200
+
+
+# Function to fetch event data from GroupMe
+def fetch_event_data(group_id, token):
+    url = f"https://api.groupme.com/v3/groups/{group_id}/events?token={token}"
+    response = requests.get(url)
+    data = response.json()
+    return data
+
+# Function to tag people who have not RSVP'd
+def tag_people_not_rsvpd(event_data, group_id, token):
+    event_name = event_data['name']
+    attendees = event_data['attendees']
+    tagged_users = []
+    
+    # Get the list of group members
+    members_url = f"https://api.groupme.com/v3/groups/{group_id}?token={token}"
+    response = requests.get(members_url)
+    members_data = response.json()
+    members = members_data['response']['members']
+    
+    # Iterate over members and check RSVP status
+    for member in members:
+        member_id = member['user_id']
+        member_name = member['nickname']
+        
+        # Check if the member has RSVP'd
+        if member_id not in attendees:
+            # Tag the member
+            tagged_users.append(member_name)
+    
+    # Send a message tagging the users who have not RSVP'd
+    if tagged_users:
+        tagged_users_str = ', '.join(tagged_users)
+        message = f"Hey everyone! Just a reminder for the upcoming event '{event_name}'. It seems that {tagged_users_str} have not RSVP'd yet. Please make sure to RSVP if you're planning to attend."
+        send_message_to_group(group_id, token, message)
+
+# Function to send a message to the group
+def send_message_to_group(group_id, token, text):
+    url = f"https://api.groupme.com/v3/groups/{group_id}/messages?token={access_token}"
+    payload = {
+        "message": {
+            "source_guid": str(uuid.uuid4()),
+            "text": text
+        }
+    }
+    response = requests.post(url, json=payload)
+    if response.status_code == 202:
+        print("Message sent successfully!")
+    else:
+        print("Failed to send message.")
+
+# Main function to fetch event data and tag people
+def main():   
+    # Fetch event data
+    event_data = fetch_event_data(group_id, token)
+    
+    # Tag people who have not RSVP'd
+    tag_people_not_rsvpd(event_data, group_id, token)
+
 
 def fetch_standings_data(standings_url):
     response = requests.get(standings_url)
