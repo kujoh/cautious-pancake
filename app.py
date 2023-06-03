@@ -53,7 +53,7 @@ def fetch_standings_data(standings_url):
     response.raise_for_status()
     soup = bs4.BeautifulSoup(response.text)
     # Find everything with class divLargeTable and assign to table
-    table = soup.find_all('div', {'class': 'divLargeTable'})[1]
+    table = soup.find_all('div', {'class': 'divLargeTable'})[-1]
     # Find everything with class divMultipleColumns and assign to rows
     rows = table.find_all('div', {'class': 'divMultipleColumns'})
     # Assign standingsTitle1 as headers
