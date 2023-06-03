@@ -84,7 +84,7 @@ def tag_people_not_rsvpd(event_data, group_id, token):
 
 # Function to send a message to the group
 def send_message_to_group(group_id, token, text):
-    url = f"https://api.groupme.com/v3/groups/{group_id}/messages?token={access_token}"
+    url = f"https://api.groupme.com/v3/groups/{group_id}/messages?token={token}"
     payload = {
         "message": {
             "source_guid": str(uuid.uuid4()),
