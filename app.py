@@ -40,7 +40,7 @@ def receive():
             post_img_to_groupme(
                 "standings.png")
             
-        if "/colors" in data["text"].lower()
+        if "/colors" in data["text"].lower():
             df = fetch_standings_data(standings_url)
             dfi.export(df['Color'], 'colors.png', table_conversion = 'matplotlib')
             post_img_to_groupme(
