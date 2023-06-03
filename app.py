@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 url = "https://api.groupme.com/v3/bots/post"
 img_url = "https://image.groupme.com"
-standings_url = "https://www.oaklandyard.com/lg_standings/lg_standings.asp?LgSessCode=2732&ReturnPg=lg%5Fsoccer%5Fcoed%2Easp%232732&ShowRankings=False&HeaderTitle=&sw=1800"
+standings_url = "https://www.oaklandyard.com/lg_standings/lg_standings.asp?LgSessCode=2770&ReturnPg=lg%5Fsoccer%5Fcoed%2Easp%232770&ShowRankings=False&HeaderTitle=&sw=1800"
 
 @app.route("/", methods=["GET"])
 def home():
@@ -35,40 +35,49 @@ def receive():
             send(" Hi, " + data["name"] + ". \n\nAll I do right now is pull the current standings. If a message sent to this group includes \"/standings\", I will post them.")
 
         if "/standings" in data["text"].lower():     #if data["text"].startswith("/standings"):
-            response = requests.get(standings_url)
-            response.raise_for_status()
-            soup = bs4.BeautifulSoup(response.text)
-            #find everything with class dicLargeTable and assign to table
-            table = soup.find_all('div', {'class': 'divLargeTable'})[1]
-            #find everything with class divMultipleColumns and assign to rows
-            rows = table.find_all('div', {'class': 'divMultipleColumns'})
-            #assign standingsTitle1 as headers
-            headers = [title.text for title in rows[0].find_all('div', {'class': 'standingsTitle1'})]
-
-            databs = {}
-            for row in rows[1:]:
-                cols = row.find_all('div')
-                index = cols[0].text.strip()
-                databs[index] = [int(value.text) for value in cols[1:]]
-    
-            df = pd.DataFrame.from_dict(databs, orient='index', columns=headers)
-        
-            # Add a new column and set its value based on a condition wrt the index
-            df['Color'] = df.index
-            df.loc[df.index == 'The B Team', 'Color'] = 'Green'
-            df.loc[df.index == '#BackHeelz', 'Color'] = 'Brown'
-            df.loc[df.index == '5 North Sundowners', 'Color'] = 'Gray'
-            df.loc[df.index == 'Misfits', 'Color'] = 'Blue'
-            df.loc[df.index == 'Weak Ankles FC', 'Color'] = 'Black'
-            df.loc[df.index == '', 'Color'] = ''
-            df.loc[df.index == df['Color'], 'Color'] = '???'
-            
+            df = fetch_standings_data(standings_url)
             dfi.export(df, 'standings.png', table_conversion = 'matplotlib')
-            
             post_img_to_groupme(
                 "standings.png")
+            
+        if "/colors" in data["text"].lower()
+            df = fetch_standings_data(standings_url)
+            dfi.export(df['Color'], 'colors.png', table_conversion = 'matplotlib')
+            post_img_to_groupme(
+                "colors.png")
 
     return "ok", 200
+
+def fetch_standings_data(standings_url):
+    response = requests.get(standings_url)
+    response.raise_for_status()
+    soup = bs4.BeautifulSoup(response.text)
+    # Find everything with class divLargeTable and assign to table
+    table = soup.find_all('div', {'class': 'divLargeTable'})[1]
+    # Find everything with class divMultipleColumns and assign to rows
+    rows = table.find_all('div', {'class': 'divMultipleColumns'})
+    # Assign standingsTitle1 as headers
+    headers = [title.text for title in rows[0].find_all('div', {'class': 'standingsTitle1'})]
+
+    databs = {}
+    for row in rows[1:]:
+        cols = row.find_all('div')
+        index = cols[0].text.strip()
+        databs[index] = [int(value.text) for value in cols[1:]]
+
+    df = pd.DataFrame.from_dict(databs, orient='index', columns=headers)
+
+    # Add a new column and set its value based on a condition wrt the index
+    df['Color'] = df.index
+    df.loc[df.index == 'The B Team', 'Color'] = 'Green'
+    df.loc[df.index == '#BackHeelz', 'Color'] = 'Brown'
+    df.loc[df.index == '5 North Sundowners', 'Color'] = 'Gray'
+    df.loc[df.index == 'Misfits', 'Color'] = 'Blue'
+    df.loc[df.index == 'Weak Ankles FC', 'Color'] = 'Black'
+    df.loc[df.index == '', 'Color'] = ''
+    df.loc[df.index == df['Color'], 'Color'] = '???'
+
+    return df
 
 def send(msg):
     json = {
