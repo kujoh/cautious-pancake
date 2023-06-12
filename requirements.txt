@@ -8,3 +8,4 @@ numpy
 dataframe_image
 matplotlib
 lxml
+mistune
