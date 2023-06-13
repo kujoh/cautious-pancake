@@ -1,11 +1,7 @@
 flask
 gunicorn
 requests
-jinja2
 bs4
 pandas
-numpy
 dataframe_image
 matplotlib
-lxml
-
