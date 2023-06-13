@@ -1,13 +1,8 @@
-import os
-import json
 import requests
-import random
 from flask import Flask, request
 import bs4
 import pandas as pd
-import numpy as np
 import dataframe_image as dfi
-import hashlib
 from urllib.request import urlopen, Request
 
 token = os.getenv("Token")
